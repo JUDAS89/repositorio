@@ -27,3 +27,15 @@ app.post('/canciones', (req,res) => {
         res.status(500).send('Error interno del servidor')
     }
 })
+
+//GET/canciones: devuelve JESON con las canciones registradas en el repertorio
+app.get('/canciones', (req, res) =>{
+    try {
+        const data = fs.readFileSync('repertorio.json', 'utf-8')
+        const canciones = JSON.parse(data)
+        res.json(canciones)
+    } catch (error) {
+        console.error ('Error al obtener las canciones:', error.message)
+        res.status(500).send('Error interno del servidor')
+    }
+})
