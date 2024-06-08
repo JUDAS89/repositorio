@@ -3,6 +3,8 @@ const app = express()
 const fs = require('fs')
 const path = require('path') //para funcionamiento del requerimiento2
 
+//MIDDLEWARE
+app.use(express.json())
 
 // 1_LEVANTAR SERVIDOR
 app.listen(3000,console.log("¡Servidor encendido!"))
@@ -70,3 +72,7 @@ app.delete('/canciones/:id', (req, res) => {
         res.status(500).send('Error interno del servidor')
     }
 }) 
+
+//MANIPULAR LOS PARAMETROS OBTENIDOS DEN LA URL
+
+//MANIPULAR EL PAYLOAD DE UNA CONSULTA HTTP AL SERVIDOR
