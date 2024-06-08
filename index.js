@@ -55,3 +55,18 @@ app.put('/canciones/:id', (req, res) => {
         res.status(500).send('Error interno del servidor')
     }
 })
+
+//DELETE/canciones/:id recibe por queryString el id de una cancion y la elimina del repertorio
+app.delete('/canciones/:id', (req, res) => {
+    try {
+        const {id} = req.params
+        const data = fs.readFileSync('repertorio.json', 'utf-8')
+        let canciones = JSON.parse (data)
+        canciones = canciones.filter(cancion => cancion.id!==parseInt(id))
+        fs.writeFileSync('repertorio.json', JSON.stringify(canciones, null, 2))
+        res.status(204).send()
+    } catch (error) {
+        console.error('Error al eliminar la cancion:', error.message)
+        res.status(500).send('Error interno del servidor')
+    }
+}) 
