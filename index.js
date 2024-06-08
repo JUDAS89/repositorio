@@ -39,3 +39,19 @@ app.get('/canciones', (req, res) =>{
         res.status(500).send('Error interno del servidor')
     }
 })
+
+//PUT/canciones/:id: recibe los datos de una cancion que se desea editar y la actualiza manipulando el JSON local
+app.put('/canciones/:id', (req, res) => {
+    try {
+        const {id} = req.params
+        const cancionActualizada = req.body
+        const data = fs.readFileSync('repertorio.json', 'utf-8')
+        let canciones = JSON.parse(data)
+        canciones = canciones.map(cancion => cancion.id === parseInt(id)?cancionActualizada:cancion)
+        fs.writeFileSync('repertorio.json', JSON.stringify(canciones,null,2))
+        res.json(cancionActualizada)
+    } catch (error) {
+        console.error('Error al actualizar la cancion:', error.message)
+        res.status(500).send('Error interno del servidor')
+    }
+})
