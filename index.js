@@ -74,9 +74,10 @@ app.delete('/canciones/:id', (req, res) => {
 }) 
 
 //4_MANIPULAR LOS PARAMETROS OBTENIDOS DEN LA URL
+//(Punto OK se cumple gracias a req.params.id es escencial para identificar la canción a actualizar, map para reemplazar canciones)
 
 //5_MANIPULAR EL PAYLOAD DE UNA CONSULTA HTTP AL SERVIDOR (Con Extensión Thunder Client para probar PAYLOAD con POST Method)
-// POST /lista-canciones: recibe una lista de canciones y las agrega al repertorio
+// POST /canciones: recibe una lista de canciones y las agrega al repertorio
 app.post('/canciones', (req, res) => {
     let canciones = req.body.canciones || [req.body];
     
