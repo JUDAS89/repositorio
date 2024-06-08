@@ -10,7 +10,7 @@ app.use(express.json())
 app.listen(3000,console.log("¡Servidor encendido!"))
 
 // 2_DEVOLVER UNA PAGINA WEB COMO RESPUESTA A UNA CONSULTA GET
-app.get('/home', (req, res) => {
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname,'index.html'));
   });
 
@@ -75,4 +75,39 @@ app.delete('/canciones/:id', (req, res) => {
 
 //4_MANIPULAR LOS PARAMETROS OBTENIDOS DEN LA URL
 
-//5_MANIPULAR EL PAYLOAD DE UNA CONSULTA HTTP AL SERVIDOR
+//5_MANIPULAR EL PAYLOAD DE UNA CONSULTA HTTP AL SERVIDOR (Con Extensión Thunder Client para probar PAYLOAD con POST Method)
+// POST /lista-canciones: recibe una lista de canciones y las agrega al repertorio
+app.post('/canciones', (req, res) => {
+    let canciones = req.body.canciones || [req.body];
+    
+    // Validar que el array de canciones tenga al menos un elemento
+    if (!Array.isArray(canciones) || canciones.length === 0) {
+        return res.status(400).send('El payload debe incluir al menos una canción.');
+    }
+    
+    // Verificar que cada canción tenga todos los campos necesarios
+    const todasValidas = canciones.every(cancion => cancion.cancion && cancion.artista && cancion.tono);
+    if (!todasValidas) {
+        return res.status(400).send('Cada canción debe incluir cancion, artista y tono.');
+    }
+
+    try {
+        const data = fs.readFileSync('repertorio.json', 'utf-8');
+        const repertorioActual = JSON.parse(data);
+        
+        // Asignar un ID único a cada nueva canción
+        const nuevasCanciones = canciones.map(cancion => ({
+            ...cancion, 
+            id: Date.now() + Math.random()  // considera usar una biblioteca como uuid para generar IDs en un entorno de producción
+        }));
+        
+        const nuevoRepertorio = [...repertorioActual, ...nuevasCanciones];
+        fs.writeFileSync('repertorio.json', JSON.stringify(nuevoRepertorio, null, 2));
+        
+        res.status(201).json(nuevasCanciones);
+    } catch (error) {
+        console.error('Error al agregar nuevas canciones:', error.message);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
