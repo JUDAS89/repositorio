@@ -16,19 +16,23 @@ app.get('/', (req, res) => {
 
 //3_OFRECER DIFERENTES RUTAS CON DIFERENTES METODOS HTTP QUE PERMITAN CRUD DE DATOS ALOJADOS EN EL ARCHIVO JSON LOCAL
 //POST/canciones: recibe los datos de una cancion y agrega al repertorio
-app.post('/canciones', (req,res) => {
+app.post('/canciones', (req, res) => {
     try {
-        const nuevaCancion = req.body
-        const data = fs.readFileSync('repertorio.json', 'utf-8')
-        const canciones = JSON.parse(data)
-        canciones.push(nuevaCancion)
-        fs.writeFileSync('repertorio.json', JSON.stringify(canciones, null, 2))
-        res.status(201).json(nuevaCancion)
+        const nuevaCancion = {
+            id: Date.now(), // Utiliza el timestamp como ID único
+            ...req.body
+        };
+        const data = fs.readFileSync('repertorio.json', 'utf-8');
+        const canciones = JSON.parse(data);
+        canciones.push(nuevaCancion);
+        fs.writeFileSync('repertorio.json', JSON.stringify(canciones, null, 2));
+        res.status(201).json(nuevaCancion);
     } catch (error) {
-        console.error('Error al agregar una nueva cancion:', error.message)
-        res.status(500).send('Error interno del servidor')
+        console.error('Error al agregar una nueva canción:', error.message);
+        res.status(500).send('Error interno del servidor');
     }
-})
+});
+
 
 //GET/canciones: devuelve JESON con las canciones registradas en el repertorio
 app.get('/canciones', (req, res) =>{
@@ -99,7 +103,7 @@ app.post('/canciones', (req, res) => {
         // Asignar un ID único a cada nueva canción
         const nuevasCanciones = canciones.map(cancion => ({
             ...cancion, 
-            id: Date.now() + Math.random()  // considera usar una biblioteca como uuid para generar IDs en un entorno de producción
+            id: Date.now() + Math.random()
         }));
         
         const nuevoRepertorio = [...repertorioActual, ...nuevasCanciones];
